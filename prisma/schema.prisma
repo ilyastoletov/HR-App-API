@@ -12,29 +12,40 @@ datasource db {
 
 model User {
   id    Int   @id @default(autoincrement())
+  authorId String @default(uuid()) @unique
   name  String
   role  Role  @default(RECRUITER)
   login String @unique
-  password String
+  password String 
   vacancies Vacancy[]
 }
 
 model Vacancy {
   id  Int @id @default(autoincrement())
+  vacancyId String  @default(uuid()) @unique
+  vacancyStatus VacancyStatus @default(OPEN)
+  department String
   title String @unique
   experience String
   salary String
-  description String
-  author User @relation(fields: [authorName], references: [login])
-  authorName String
+  requirements String
+  conditions String
+  job_duties String
+  author User @relation(fields: [authorId], references: [authorId]) @ignore
+  authorId String
   responders Applicant[]
 }
 
 model Applicant {
   id Int @id @default(autoincrement())
-  vacancy Vacancy @relation(fields: [vacancyId], references: [id])
-  vacancyId Int
+  vacancy Vacancy @relation(fields: [vacancyId], references: [vacancyId]) @ignore
+  vacancyId String @unique
   name String
+  experience String
+  education String
+  wanted_salary Int
+  city String
+  status ApplicantStatus @default(NEW)
   photo_url String
   resume_url String
   social_media_links String[]
@@ -43,4 +54,22 @@ model Applicant {
 enum Role {
   RECRUITER 
   ADMIN
+}
+
+enum VacancyStatus {
+  OPEN
+  PAUSED
+  STOPPED
+}
+
+enum ApplicantStatus {
+  NEW
+  TEST_TASK
+  PHONE_INTERVIEW
+  TECH_INTERVIEW
+  OFFER
+  ONBOARDING
+  APPLICANT_DECLINE
+  RECRUITER_DECLINE
+  DELETED
 }

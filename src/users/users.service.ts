@@ -11,7 +11,7 @@ export class UsersService {
     const createResult = await this.prismaService.user.create({ data: userDto }).catch((exception: any) => {
       console.log(exception);
     });
-    return {message: "User created... maybe", user_data: createResult}
+    return {message: "User created", user_data: createResult}
   }
 
   async findAll() {
@@ -19,18 +19,18 @@ export class UsersService {
     return allUsers
   }
 
-  async findOne(id: number) {
-    const result = await this.prismaService.user.findFirstOrThrow({ where: {id} });
+  async findOne(authorId: string) {
+    const result = await this.prismaService.user.findFirstOrThrow({ where: {authorId} });
     return result
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    const updateOperation = await this.prismaService.user.update({where: {id}, data: updateUserDto})
+  async update(authorId: string, updateUserDto: UpdateUserDto) {
+    const updateOperation = await this.prismaService.user.update({where: {authorId}, data: updateUserDto})
     return {message: "User updated", updated_user: updateOperation}
   }
 
-  async remove(id: number) {
-    await this.prismaService.user.delete({where: {id}})
+  async remove(authorId: string) {
+    await this.prismaService.user.delete({where: {authorId}})
     return {message: "User deleted"}
   }
 }
