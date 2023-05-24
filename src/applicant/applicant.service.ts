@@ -1,26 +1,34 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateApplicantDto } from './dto/create-applicant.dto';
 import { UpdateApplicantDto } from './dto/update-applicant.dto';
 
 @Injectable()
 export class ApplicantService {
-  create(createApplicantDto: CreateApplicantDto) {
-    return 'This action adds a new applicant';
+  constructor(private readonly prismaService: PrismaService) {}
+  
+  async create(createApplicantDto: CreateApplicantDto) {
+    const createdObject = await this.prismaService.applicant.create({ data: createApplicantDto });
+    return {message: 'Applicant created', createdApplicant: createdObject};
   }
 
-  findAll() {
-    return `This action returns all applicant`;
+  async findAll() {
+    const applicants = await this.prismaService.applicant.findMany();
+    return applicants;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} applicant`;
+  async findOne(applicantId: string) {
+    const applicant = await this.prismaService.applicant.findUnique({ where: { applicantId } });
+    return applicant;
   }
 
-  update(id: number, updateApplicantDto: UpdateApplicantDto) {
-    return `This action updates a #${id} applicant`;
+  async update(applicantId: string, updateApplicantDto: UpdateApplicantDto) {
+    const updatedObject = await this.prismaService.applicant.update({ where: { applicantId }, data: updateApplicantDto });
+    return {message: 'Applicant updated', updatedApplicant: updatedObject};
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} applicant`;
+  async remove(applicantId: string) {
+    const deletedObject = await this.prismaService.applicant.delete({ where: { applicantId } });
+    return {message: 'Applicant deleted', deletedApplicant: deletedObject};
   }
 }

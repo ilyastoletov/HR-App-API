@@ -38,12 +38,13 @@ model Vacancy {
 
 model Applicant {
   id Int @id @default(autoincrement())
-  vacancy Vacancy @relation(fields: [vacancyId], references: [vacancyId]) @ignore
-  vacancyId String @unique
+  vacancy Vacancy @relation(fields: [appliedVacancyId], references: [vacancyId]) @ignore
+  applicantId String @default(uuid()) @ unique
+  appliedVacancyId String @unique
   name String
   experience String
   education String
-  wanted_salary Int
+  wanted_salary String
   city String
   status ApplicantStatus @default(NEW)
   photo_url String

@@ -20,7 +20,7 @@ export class UsersService {
   }
 
   async findOne(authorId: string) {
-    const result = await this.prismaService.user.findFirstOrThrow({ where: {authorId} });
+    const result = await this.prismaService.user.findUnique({ where: {authorId} });
     return result
   }
 

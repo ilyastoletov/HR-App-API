@@ -1,4 +1,15 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateApplicantDto } from './create-applicant.dto';
+import { ApplicantStatus } from "@prisma/client";
 
-export class UpdateApplicantDto extends PartialType(CreateApplicantDto) {}
+export type UpdateApplicantDto = {
+    applicantId?: string
+    vacancyId?: string,
+    name?: string,
+    experience?: string,
+    education?: string,
+    wanted_salary?: string,
+    city?: string,
+    status?: ApplicantStatus,
+    photo_url?: string,
+    resume_url?: string,
+    social_media_links?: string[]
+};

@@ -1,0 +1,28 @@
+version: '3.5'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=12345678
+    container_name: postgres
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+      
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hr_app
+    environment:
+      - DATABASE_URL=postgresql://postgres:12345678@postgres:5432/postgres?schema=public
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    volumes:
+      - ./src:/app/src
