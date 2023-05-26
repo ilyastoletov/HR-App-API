@@ -17,7 +17,7 @@ model User {
   role  Role  @default(RECRUITER)
   login String @unique
   password String 
-  vacancies Vacancy[]
+  vacanciesIds String[]
 }
 
 model Vacancy {
@@ -31,14 +31,12 @@ model Vacancy {
   requirements String
   conditions String
   job_duties String
-  author User @relation(fields: [authorId], references: [authorId]) @ignore
   authorId String
-  responders Applicant[]
+  responderIds String[]
 }
 
 model Applicant {
   id Int @id @default(autoincrement())
-  vacancy Vacancy @relation(fields: [appliedVacancyId], references: [vacancyId]) @ignore
   applicantId String @default(uuid()) @ unique
   appliedVacancyId String @unique
   name String

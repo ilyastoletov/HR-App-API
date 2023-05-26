@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { UserLoginDto } from './dto/user-login.dto';
 
 @Controller('users')
 export class UsersController {
@@ -11,6 +12,12 @@ export class UsersController {
   async create(@Body() userDto: User) {
     console.log(userDto);
     return this.usersService.create(userDto);
+  }
+
+  @Post("login")
+  async login(@Body() userDto: UserLoginDto) {
+    console.log(userDto);
+    return this.usersService.login(userDto);
   }
 
   @Get("getAll")
