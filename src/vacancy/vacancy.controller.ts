@@ -13,8 +13,8 @@ export class VacancyController {
   }
 
   @Get("getAll")
-  findAll() {
-    return this.vacancyService.findAll();
+  findAll(@Query('user_id') userId: string) {
+    return this.vacancyService.findAll(userId);
   }
 
   @Get("getById")

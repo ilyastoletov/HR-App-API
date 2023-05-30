@@ -16,6 +16,7 @@ model User {
   name  String
   role  Role  @default(RECRUITER)
   login String @unique
+  createdAtDate String
   password String 
   vacanciesIds String[]
 }
@@ -24,6 +25,7 @@ model Vacancy {
   id  Int @id @default(autoincrement())
   vacancyId String  @default(uuid()) @unique
   vacancyStatus VacancyStatus @default(OPEN)
+  createdAt String
   department String
   title String @unique
   experience String
@@ -39,6 +41,7 @@ model Applicant {
   id Int @id @default(autoincrement())
   applicantId String @default(uuid()) @ unique
   appliedVacancyId String @unique
+  appliedAtDate String
   name String
   experience String
   education String

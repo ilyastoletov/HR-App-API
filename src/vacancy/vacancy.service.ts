@@ -15,8 +15,8 @@ export class VacancyService {
     return {messaage: "Vacancy created", created_object: creatingResult};
   }
 
-  async findAll() {
-    const allVacancies = await this.prismaService.vacancy.findMany();
+  async findAll(authorId: string) {
+    const allVacancies = await this.prismaService.vacancy.findMany({where: { authorId: authorId } });
     return allVacancies;
   }
 
