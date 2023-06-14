@@ -1,14 +1,14 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { VacancyService } from './vacancy.service';
 import { UpdateVacancyDto } from './dto/update-vacancy.dto';
-import { Vacancy } from './entities/vacancy.entity';
+import { CreateVacancyDto } from './dto/create-vacancy.dto';
 
 @Controller('vacancy')
 export class VacancyController {
   constructor(private readonly vacancyService: VacancyService) {}
 
   @Post("create")
-  create(@Body() createVacancyDto: Vacancy) {
+  create(@Body() createVacancyDto: CreateVacancyDto) {
     return this.vacancyService.create(createVacancyDto);
   }
 

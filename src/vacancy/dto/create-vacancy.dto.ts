@@ -1,6 +1,5 @@
-import { User } from "@prisma/client"
-
 export type CreateVacancyDto = {
+    createdAt: string,
     department: string,
     title: string,
     experience: string,

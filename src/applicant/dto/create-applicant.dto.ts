@@ -2,7 +2,8 @@ import { ApplicantStatus } from "@prisma/client"
 
 export type CreateApplicantDto = {
     applicantId?: string
-    vacancyId: string,
+    appliedVacancyId: string,
+    appliedAtDate: string,
     name: string,
     experience: string,
     education: string,

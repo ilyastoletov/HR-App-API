@@ -4,6 +4,7 @@ export type User = {
     name:  string,
     role: Role,
     login: string,
+    createdAtDate: string,
     password: string,
-    vacancies: Vacancy[]
+    vacanciesId: string[]
 }
