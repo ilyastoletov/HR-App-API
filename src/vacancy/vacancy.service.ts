@@ -17,12 +17,13 @@ export class VacancyService {
 
   async findAll(authorId: string) {
     const allVacancies = await this.prismaService.vacancy.findMany({where: { authorId: authorId }, orderBy: [{createdAt: 'desc'}, {vacancyStatus: 'asc'}] });
+    //const newApplicantsCount = allVacancies.filter(vacancy => vacancy.)
     return allVacancies;
   }
 
   async findById(vacancyId: string) {
     const vacancy = await this.prismaService.vacancy.findUnique({ where: { vacancyId } });
-    return {object: vacancy, id: vacancyId};
+    return vacancy;
   }
 
   async update(vacancy_Id: string, updateVacancyDto: UpdateVacancyDto) {

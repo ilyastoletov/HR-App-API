@@ -9,6 +9,9 @@ export class ApplicantService {
   
   async create(createApplicantDto: CreateApplicantDto) {
     const createdObject = await this.prismaService.applicant.create({ data: createApplicantDto });
+    const appliedVacancyObject = await this.prismaService.vacancy.findUnique({ where: { vacancyId: createApplicantDto.appliedVacancyId } });
+    appliedVacancyObject.responderIds.push(createdObject.applicantId);
+    await this.prismaService.vacancy.update({ where: { vacancyId: createApplicantDto.appliedVacancyId }, data: { responderIds: appliedVacancyObject.responderIds } });
     return {message: 'Applicant created', createdApplicant: createdObject};
   }
 

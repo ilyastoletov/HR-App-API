@@ -39,8 +39,8 @@ model Vacancy {
 
 model Applicant {
   id Int @id @default(autoincrement())
-  applicantId String @default(uuid()) @ unique
-  appliedVacancyId String @unique
+  applicantId String @default(uuid()) @unique
+  appliedVacancyId String
   appliedAtDate String
   name String
   experience String
