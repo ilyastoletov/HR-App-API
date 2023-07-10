@@ -33,6 +33,7 @@ model Vacancy {
   requirements String
   conditions String
   job_duties String
+  newApplicantsCount Int @default(0)
   authorId String
   responderIds String[]
 }

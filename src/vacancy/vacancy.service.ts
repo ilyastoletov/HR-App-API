@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ApplicantStatus, VacancyStatus } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateVacancyDto } from './dto/create-vacancy.dto';
 import { UpdateVacancyDto } from './dto/update-vacancy.dto';
@@ -17,7 +18,16 @@ export class VacancyService {
 
   async findAll(authorId: string) {
     const allVacancies = await this.prismaService.vacancy.findMany({where: { authorId: authorId }, orderBy: [{createdAt: 'desc'}, {vacancyStatus: 'asc'}] });
-    //const newApplicantsCount = allVacancies.filter(vacancy => vacancy.)
+    for (var i = 0; i < allVacancies.length; i++) {
+      let newApplicantsCount = 0;
+      for (var j = 0; j < allVacancies[i].responderIds.length; j++) {
+          const applicantObject = await this.prismaService.applicant.findUnique({ where: { applicantId: allVacancies[i].responderIds[j] } });
+          if (applicantObject.status === ApplicantStatus.NEW) {
+            newApplicantsCount++;
+          }
+      }
+      allVacancies[i].newApplicantsCount = newApplicantsCount;
+    }
     return allVacancies;
   }
 
@@ -34,5 +44,18 @@ export class VacancyService {
   async remove(vacancy_Id: string) {
     const removingResult = await this.prismaService.vacancy.delete({ where: { vacancyId: vacancy_Id } });
     return {messaage: "Vacancy removed", removed_object: removingResult};
+  }
+
+  async changeStatus(vacancyId: string, status: string) {
+    let enumValueVacancyStatus: VacancyStatus;
+    if (status === "OPEN") {
+      enumValueVacancyStatus = VacancyStatus.OPEN;
+    } else if (status == "PAUSED") {
+      enumValueVacancyStatus = VacancyStatus.PAUSED;
+    } else {
+      enumValueVacancyStatus = VacancyStatus.STOPPED;
+    }
+    const updatedObject = await this.prismaService.vacancy.update({ where: { vacancyId: vacancyId }, data: { vacancyStatus: enumValueVacancyStatus } });
+    return { message: "Vacancy status updated", updated_object: updatedObject };
   }
 }
