@@ -15,8 +15,8 @@ export class ApplicantService {
     return {message: 'Applicant created', createdApplicant: createdObject};
   }
 
-  async findAll() {
-    const applicants = await this.prismaService.applicant.findMany();
+  async findAll(vacancyId: string) {
+    const applicants = await this.prismaService.applicant.findMany({ where: { appliedVacancyId: vacancyId } });
     return applicants;
   }
 

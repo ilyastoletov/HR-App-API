@@ -13,8 +13,8 @@ export class ApplicantController {
   }
 
   @Get("getAll")
-  async findAll() {
-    return this.applicantService.findAll();
+  async findAll(@Query('vacancyId') vacancyId: string) {
+    return this.applicantService.findAll(vacancyId);
   }
 
   @Get('getById')
