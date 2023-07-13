@@ -4,6 +4,9 @@ export type UpdateApplicantDto = {
     applicantId?: string
     vacancyId?: string,
     name?: string,
+    age?: number,
+    phone?: string,
+    email?: string,
     experience?: string,
     education?: string,
     wanted_salary?: string,

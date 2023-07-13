@@ -42,6 +42,11 @@ export class VacancyService {
   }
 
   async remove(vacancy_Id: string) {
+    const deletingVacancy = await this.prismaService.vacancy.findUnique({ where: { vacancyId: vacancy_Id } });
+    const vacancyAuthorObject = await this.prismaService.user.findUnique({ where: { authorId: deletingVacancy.authorId } });
+    const deletingVacancyIndex = vacancyAuthorObject.vacanciesIds.indexOf(vacancy_Id);
+    delete vacancyAuthorObject.vacanciesIds[deletingVacancyIndex]
+    await this.prismaService.user.update({ where: { authorId: vacancyAuthorObject.authorId }, data: { vacanciesIds: vacancyAuthorObject.vacanciesIds } });
     const removingResult = await this.prismaService.vacancy.delete({ where: { vacancyId: vacancy_Id } });
     return {messaage: "Vacancy removed", removed_object: removingResult};
   }

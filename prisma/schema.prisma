@@ -44,6 +44,9 @@ model Applicant {
   appliedVacancyId String
   appliedAtDate String
   name String
+  age Int @default(0)
+  phone String
+  email String
   experience String
   education String
   wanted_salary String

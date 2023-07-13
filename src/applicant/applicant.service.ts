@@ -31,6 +31,11 @@ export class ApplicantService {
   }
 
   async remove(applicantId: string) {
+    const deletingApplicantObject = await this.prismaService.applicant.findUnique({ where: { applicantId: applicantId } });
+    const parentVacancyObject = await this.prismaService.vacancy.findUnique({ where: { vacancyId: deletingApplicantObject.appliedVacancyId } });
+    const applicantIndex = parentVacancyObject.responderIds.indexOf(applicantId);
+    delete parentVacancyObject.responderIds[applicantIndex]
+    await this.prismaService.vacancy.update({ where: { vacancyId: parentVacancyObject.vacancyId }, data: { responderIds: parentVacancyObject.responderIds } });
     const deletedObject = await this.prismaService.applicant.delete({ where: { applicantId } });
     return {message: 'Applicant deleted', deletedApplicant: deletedObject};
   }
