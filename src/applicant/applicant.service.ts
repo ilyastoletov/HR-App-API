@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ApplicantStatus } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateApplicantDto } from './dto/create-applicant.dto';
 import { UpdateApplicantDto } from './dto/update-applicant.dto';
@@ -38,5 +39,16 @@ export class ApplicantService {
     await this.prismaService.vacancy.update({ where: { vacancyId: parentVacancyObject.vacancyId }, data: { responderIds: parentVacancyObject.responderIds } });
     const deletedObject = await this.prismaService.applicant.delete({ where: { applicantId } });
     return {message: 'Applicant deleted', deletedApplicant: deletedObject};
+  }
+
+  async changeStatus(applicantId: string, status: string) {
+      const enumApplicantStatus = this.getEnumStatusFromString(status)
+      const updatedObject = await this.prismaService.applicant.update({ where: { applicantId: applicantId }, data: { status: enumApplicantStatus } })
+      return {message: "Applicant status updated", updated_object: updatedObject}
+  }
+
+  private getEnumStatusFromString(stringApplicantStatus: string): ApplicantStatus {
+      let enumApplicantStatus: ApplicantStatus;
+      return enumApplicantStatus
   }
 }

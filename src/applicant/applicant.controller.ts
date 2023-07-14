@@ -31,4 +31,9 @@ export class ApplicantController {
   async remove(@Query('applicantId') applicantId: string) {
     return this.applicantService.remove(applicantId);
   }
+
+  @Patch('changeStatus')
+  async changeStatus(@Query('applicantId') applicantId: string, @Query('status') status: string) {
+    return this.applicantService.changeStatus(applicantId, status)
+  }
 }
