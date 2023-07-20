@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { ApplicantStatus } from '@prisma/client';
 import { ApplicantService } from './applicant.service';
 import { CreateApplicantDto } from './dto/create-applicant.dto';
 import { UpdateApplicantDto } from './dto/update-applicant.dto';
@@ -17,9 +18,19 @@ export class ApplicantController {
     return this.applicantService.findAll(vacancyId);
   }
 
+  @Get('getByPage')
+  async findByPage(@Query('vacancyId') vacancyId: string, @Query('page') page: number = 1, @Query('status') status: ApplicantStatus) {
+    return this.applicantService.findByPage(vacancyId, page, status)
+  }
+
   @Get('getById')
   async findOne(@Query('applicantId') applicantId: string) {
     return this.applicantService.findOne(applicantId);
+  }
+
+  @Post('createMany')
+  async createMany(@Body() createApplicantDtoArray: CreateApplicantDto[]) {
+    return this.applicantService.createMany(createApplicantDtoArray);
   }
 
   @Patch('update')

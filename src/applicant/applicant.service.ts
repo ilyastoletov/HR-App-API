@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ApplicantStatus } from '@prisma/client';
+import { Applicant, ApplicantStatus } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateApplicantDto } from './dto/create-applicant.dto';
 import { UpdateApplicantDto } from './dto/update-applicant.dto';
@@ -16,9 +16,28 @@ export class ApplicantService {
     return {message: 'Applicant created', createdApplicant: createdObject};
   }
 
+  async createMany(applicantsArray: CreateApplicantDto[]) {
+    for (var i = 0; i < applicantsArray.length; i++) {
+      await this.create(applicantsArray[i]);
+    }
+    return {message: "Applicants created"};
+  }
+
   async findAll(vacancyId: string) {
     const applicants = await this.prismaService.applicant.findMany({ where: { appliedVacancyId: vacancyId } });
     return applicants;
+  }
+
+  async findByPage(vacancyId: string, page: number, status: ApplicantStatus) {
+    const allApplicantsList = await this.prismaService.applicant.findMany({ where: { appliedVacancyId: vacancyId } });
+    const statusFilteredList = allApplicantsList.filter((applicant) => applicant.status === status);
+    let slicedApplicantsList: Applicant[];
+    if (allApplicantsList.length >= 10 || allApplicantsList.length >= page * 10) {
+      slicedApplicantsList = statusFilteredList.slice((page * 10) - 10, (page * 10) - 1);
+    } else {
+      slicedApplicantsList = statusFilteredList.slice((page * 10) - 10, allApplicantsList.length);
+    }
+    return slicedApplicantsList
   }
 
   async findOne(applicantId: string) {
@@ -48,7 +67,17 @@ export class ApplicantService {
   }
 
   private getEnumStatusFromString(stringApplicantStatus: string): ApplicantStatus {
-      let enumApplicantStatus: ApplicantStatus;
-      return enumApplicantStatus
+    const statusMap: { [key: string]: ApplicantStatus } = {
+      NEW: ApplicantStatus.NEW,
+      TEST_TASK: ApplicantStatus.TEST_TASK,
+      PHONE_INTERVIEW: ApplicantStatus.PHONE_INTERVIEW,
+      TECH_INTERVIEW: ApplicantStatus.TECH_INTERVIEW,
+      OFFER: ApplicantStatus.OFFER,
+      ONBOARDING: ApplicantStatus.ONBOARDING,
+      APPLICANT_DECLINE: ApplicantStatus.APPLICANT_DECLINE,
+      RECRUITER_DECLINE: ApplicantStatus.RECRUITER_DECLINE,
+    };
+  
+    return statusMap[stringApplicantStatus] || null;
   }
 }
