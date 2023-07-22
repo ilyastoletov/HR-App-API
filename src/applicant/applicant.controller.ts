@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { ApplicantStatus } from '@prisma/client';
 import { ApplicantService } from './applicant.service';
 import { CreateApplicantDto } from './dto/create-applicant.dto';
+import { SearchApplicantDto } from './dto/search-applicant.dto';
 import { UpdateApplicantDto } from './dto/update-applicant.dto';
 
 @Controller('applicant')
@@ -13,9 +14,14 @@ export class ApplicantController {
     return this.applicantService.create(createApplicantDto);
   }
 
-  @Get("getAll")
+  @Get("getAllByVacancyId")
   async findAll(@Query('vacancyId') vacancyId: string) {
-    return this.applicantService.findAll(vacancyId);
+    return this.applicantService.findAllByVacancyId(vacancyId);
+  }
+
+  @Get("getAll")
+  async getAll() {
+    return this.applicantService.getAll();
   }
 
   @Get('getByPage')
@@ -46,5 +52,13 @@ export class ApplicantController {
   @Patch('changeStatus')
   async changeStatus(@Query('applicantId') applicantId: string, @Query('status') status: string) {
     return this.applicantService.changeStatus(applicantId, status)
+  }
+
+  @Get('search')
+  async search(@Query('query') searchQuery: string,
+   @Query("city") city: string = "",
+    @Query("fullWorkDay") fullWorkDay?: boolean,
+     @Query("wantedSalaryBottom") wantedBot: string = "", @Query("wantedSalaryTop") wantedTop: string = "") {
+    return this.applicantService.search(searchQuery, city, wantedBot, wantedTop, fullWorkDay)
   }
 }

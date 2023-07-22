@@ -41,7 +41,7 @@ model Vacancy {
 model Applicant {
   id Int @id @default(autoincrement())
   applicantId String @default(uuid()) @unique
-  appliedVacancyId String
+  appliedVacancyId String @default("")
   appliedAtDate String
   name String
   age Int @default(0)
@@ -49,6 +49,9 @@ model Applicant {
   email String
   experience String
   education String
+  profession String @default("")
+  fullWorkDay Boolean @default(true)
+  job_experience Int @default(0)
   wanted_salary String
   city String
   status ApplicantStatus @default(NEW)

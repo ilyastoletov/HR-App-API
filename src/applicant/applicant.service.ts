@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Applicant, ApplicantStatus } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateApplicantDto } from './dto/create-applicant.dto';
+import { SearchApplicantDto } from './dto/search-applicant.dto';
 import { UpdateApplicantDto } from './dto/update-applicant.dto';
 
 @Injectable()
@@ -23,9 +24,14 @@ export class ApplicantService {
     return {message: "Applicants created"};
   }
 
-  async findAll(vacancyId: string) {
+  async findAllByVacancyId(vacancyId: string) {
     const applicants = await this.prismaService.applicant.findMany({ where: { appliedVacancyId: vacancyId } });
     return applicants;
+  }
+
+  async getAll() {
+    const allApplicantsList = await this.prismaService.applicant.findMany();
+    return allApplicantsList;
   }
 
   async findByPage(vacancyId: string, page: number, status: ApplicantStatus) {
@@ -65,6 +71,32 @@ export class ApplicantService {
       const updatedObject = await this.prismaService.applicant.update({ where: { applicantId: applicantId }, data: { status: enumApplicantStatus } })
       return {message: "Applicant status updated", updated_object: updatedObject}
   }
+
+  async search(query: string, city: string, wantedSalaryBottom: string, wantedSalaryTop: string, fullWorkDay?: boolean) {
+    const allApplicantsList = await this.prismaService.applicant.findMany({ where: { status: ApplicantStatus.NEW }});
+    const filteredByQuery = allApplicantsList.filter((applicant) => applicant.profession.includes(query));
+
+    let finalFiltered: Applicant[] = filteredByQuery;
+
+    if (city != "null") {
+      finalFiltered = finalFiltered.filter((applicant) => applicant.city === city);
+    } 
+    
+    if (fullWorkDay) {
+      finalFiltered = finalFiltered.filter((applicant) => applicant.fullWorkDay === fullWorkDay);
+    }
+    
+    if (wantedSalaryBottom != "null" && wantedSalaryTop != "null") {
+      const numericBottom: number = Number(wantedSalaryBottom)
+      const numericTop: number = Number(wantedSalaryTop)
+      const filteredBottom = finalFiltered.filter((applicant) => (numericBottom < Number(applicant.wanted_salary)))
+      const filteredTop = filteredBottom.filter((applicant) => (Number(applicant.wanted_salary) < numericTop))
+      finalFiltered = filteredTop
+    }
+
+    return finalFiltered;
+
+  };
 
   private getEnumStatusFromString(stringApplicantStatus: string): ApplicantStatus {
     const statusMap: { [key: string]: ApplicantStatus } = {
