@@ -57,7 +57,7 @@ export class ApplicantController {
   @Get('search')
   async search(@Query('query') searchQuery: string,
    @Query("city") city: string = "",
-    @Query("fullWorkDay") fullWorkDay?: boolean,
+    @Query("fullWorkDay") fullWorkDay: string = "true",
      @Query("wantedSalaryBottom") wantedBot: string = "", @Query("wantedSalaryTop") wantedTop: string = "") {
     return this.applicantService.search(searchQuery, city, wantedBot, wantedTop, fullWorkDay)
   }

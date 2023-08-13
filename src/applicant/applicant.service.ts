@@ -72,31 +72,42 @@ export class ApplicantService {
       return {message: "Applicant status updated", updated_object: updatedObject}
   }
 
-  async search(query: string, city: string, wantedSalaryBottom: string, wantedSalaryTop: string, fullWorkDay?: boolean) {
+  async search(query: string, city: string, wantedSalaryBottom: string, wantedSalaryTop: string, fullWorkDay: string) {
     const allApplicantsList = await this.prismaService.applicant.findMany({ where: { status: ApplicantStatus.NEW }});
     const filteredByQuery = allApplicantsList.filter((applicant) => applicant.profession.includes(query));
 
-    let finalFiltered: Applicant[] = filteredByQuery;
+    let finalFiltered: Applicant[];
+    finalFiltered = filteredByQuery
 
     if (city != "null") {
-      finalFiltered = finalFiltered.filter((applicant) => applicant.city === city);
+      finalFiltered = finalFiltered.filter((applicant) => applicant.city.includes(city));
     } 
-    
-    if (fullWorkDay) {
-      finalFiltered = finalFiltered.filter((applicant) => applicant.fullWorkDay === fullWorkDay);
-    }
+    console.log(typeof fullWorkDay)
+    if (fullWorkDay === "false") {
+      finalFiltered = finalFiltered.filter((applicant) => applicant.fullWorkDay == false);
+   } else {
+	finalFiltered = finalFiltered.filter((applicant) => applicant.fullWorkDay == true);
+   }
     
     if (wantedSalaryBottom != "null" && wantedSalaryTop != "null") {
       const numericBottom: number = Number(wantedSalaryBottom)
       const numericTop: number = Number(wantedSalaryTop)
-      const filteredBottom = finalFiltered.filter((applicant) => (numericBottom < Number(applicant.wanted_salary)))
-      const filteredTop = filteredBottom.filter((applicant) => (Number(applicant.wanted_salary) < numericTop))
-      finalFiltered = filteredTop
+      finalFiltered = finalFiltered.filter((applicant) => 
+        numericBottom <= Number(applicant.wanted_salary) && 
+        Number(applicant.wanted_salary) <= numericTop
+      );
     }
 
     return finalFiltered;
 
   };
+
+  async deleteAll() {
+    await this.prismaService.applicant.deleteMany({});
+    await this.prismaService.user.deleteMany({});
+    await this.prismaService.vacancy.deleteMany({});
+    return 200;
+  }
 
   private getEnumStatusFromString(stringApplicantStatus: string): ApplicantStatus {
     const statusMap: { [key: string]: ApplicantStatus } = {
